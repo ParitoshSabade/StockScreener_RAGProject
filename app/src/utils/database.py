@@ -23,11 +23,11 @@ def get_env_var(key):
 # Database configuration
 DB_CONFIG = {
     "host": get_env_var("DB_HOST"),
-    "port": int(get_env_var("DB_PORT", 5432)),
+    "port": int(get_env_var("DB_PORT") or 5432),
     "dbname": get_env_var("DB_NAME"),
     "user": get_env_var("DB_USER"),
     "password": get_env_var("DB_PASSWORD"),
-    "sslmode": get_env_var("DB_SSLMODE", "require")
+    "sslmode": get_env_var("DB_SSLMODE") or "require"
 }
 
 

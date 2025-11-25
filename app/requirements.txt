@@ -1,0 +1,12 @@
+# Core Dependencies
+openai==2.8.1
+psycopg2-binary==2.9.11
+python-dotenv==1.2.1
+
+# Streamlit (for UI - we'll use this next)
+streamlit==1.51.0
+
+# Optional but recommended
+requests==2.32.5
+
+streamlit-cookies-manager==0.2.0

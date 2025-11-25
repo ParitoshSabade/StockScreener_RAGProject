@@ -1,0 +1,12 @@
+# API and HTTP
+requests==2.32.5
+python-dotenv==1.2.1
+
+# Database
+psycopg2-binary==2.9.11
+
+# OpenAI
+openai==2.8.0
+
+# Text processing
+tiktoken==0.12.0

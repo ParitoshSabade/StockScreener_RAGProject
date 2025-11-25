@@ -8,7 +8,30 @@ import logging
 from datetime import datetime
 import uuid
 from streamlit_cookies_manager import EncryptedCookieManager
-# Add src to path
+import socket
+
+def getaddrinfo_ipv4_only(*args, **kwargs):
+    # Filter arguments to force IPv4 family
+    if 'family' in kwargs:
+        kwargs['family'] = socket.AF_INET
+    
+    # If arguments are passed as positional, the family is the 2nd arg
+    # socket.getaddrinfo(host, port, family=0, type=0, proto=0, flags=0)
+    elif len(args) > 1:
+        args_list = list(args)
+        args_list[2] = socket.AF_INET # Override family to AF_INET (IPv4)
+        args = tuple(args_list)
+    else:
+        # If no family specified, force it via kwargs for safety
+        kwargs['family'] = socket.AF_INET
+
+    return original_getaddrinfo(*args, **kwargs)
+
+# Store the original function
+original_getaddrinfo = socket.getaddrinfo
+# Apply the patch
+socket.getaddrinfo = getaddrinfo_ipv4_only
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.rag.orchestrator import RAGOrchestrator

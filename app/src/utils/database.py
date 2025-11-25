@@ -12,24 +12,12 @@ import streamlit as st
 load_dotenv()
 
 logger = logging.getLogger(__name__)
-def get_env_var(key):
+
+def get_env_var(key, default=None):
     """Get environment variable from .env or Streamlit secrets"""
-    # Try Streamlit secrets first (for deployment)
     if hasattr(st, 'secrets') and key in st.secrets:
         return st.secrets[key]
-    # Fallback to environment variable (for local dev)
-    return os.getenv(key)
-
-# Database configuration
-DB_CONFIG = {
-    "host": get_env_var("DB_HOST"),
-    "port": int(get_env_var("DB_PORT") or 5432),
-    "dbname": get_env_var("DB_NAME"),
-    "user": get_env_var("DB_USER"),
-    "password": get_env_var("DB_PASSWORD"),
-    "sslmode": get_env_var("DB_SSLMODE") or "require"
-}
-
+    return os.getenv(key, default)
 
 def get_db_connection():
     """
@@ -38,8 +26,9 @@ def get_db_connection():
     Returns:
         Database connection object
     """
+    database_url = get_env_var("DATABASE_URL")
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+        conn = psycopg2.connect(database_url)
         return conn
     except Exception as e:
         logger.error(f"Database connection error: {e}")

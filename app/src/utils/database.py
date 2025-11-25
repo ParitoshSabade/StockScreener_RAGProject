@@ -6,20 +6,28 @@ import logging
 import psycopg2
 from typing import Optional
 from dotenv import load_dotenv
+import streamlit as st
 
 # Load environment variables
 load_dotenv()
 
 logger = logging.getLogger(__name__)
+def get_env_var(key):
+    """Get environment variable from .env or Streamlit secrets"""
+    # Try Streamlit secrets first (for deployment)
+    if hasattr(st, 'secrets') and key in st.secrets:
+        return st.secrets[key]
+    # Fallback to environment variable (for local dev)
+    return os.getenv(key)
 
 # Database configuration
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),
-    "port": int(os.getenv("DB_PORT", 5432)),
-    "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "sslmode": os.getenv("DB_SSLMODE", "require")
+    "host": get_env_var("DB_HOST"),
+    "port": int(get_env_var("DB_PORT", 5432)),
+    "dbname": get_env_var("DB_NAME"),
+    "user": get_env_var("DB_USER"),
+    "password": get_env_var("DB_PASSWORD"),
+    "sslmode": get_env_var("DB_SSLMODE", "require")
 }
 
 

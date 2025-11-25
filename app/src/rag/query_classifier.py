@@ -8,13 +8,15 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from ..utils.company_loader import CompanyLoader
+import streamlit as st
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+OPENAI_API_KEY = ""
+if hasattr(st, 'secrets') and "OPENAI_API_KEY" in st.secrets:
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 class QueryClassifier:
     """Classifies user queries to determine routing strategy"""
@@ -30,63 +32,63 @@ class QueryClassifier:
         
         return f"""You are a query classifier for a NASDAQ-100 stock screening system.
 
-AVAILABLE COMPANIES:
-{self.company_list}
+        AVAILABLE COMPANIES:
+        {self.company_list}
 
-You have access to two types of data:
+        You have access to two types of data:
 
-1. STRUCTURED DATA (SQL): Financial statements with numerical metrics
-   - Income statements, balance sheets, cash flow statements
-   - Financial ratios (margins, ROE, P/E, debt ratios)
-   - Time series data (3 fiscal years + 4 quarters)
+        1. STRUCTURED DATA (SQL): Financial statements with numerical metrics
+        - Income statements, balance sheets, cash flow statements
+        - Financial ratios (margins, ROE, P/E, debt ratios)
+        - Time series data (3 fiscal years + 4 quarters)
 
-2. TEXTUAL DATA (Vector Search): 10-K filing sections with qualitative information
-   - Business description and strategy
-   - Risk factors
-   - Management discussion & analysis (MD&A)
-   - Legal proceedings
-   - Market risk disclosures
+        2. TEXTUAL DATA (Vector Search): 10-K filing sections with qualitative information
+        - Business description and strategy
+        - Risk factors
+        - Management discussion & analysis (MD&A)
+        - Legal proceedings
+        - Market risk disclosures
 
-Classify the query into ONE category:
+        Classify the query into ONE category:
 
-QUANTITATIVE: Asks for numerical metrics, financial calculations, comparisons
-Examples:
-- "Which companies have revenue over $100B?"
-- "Show me companies with ROE > 15%"
-- "Compare profit margins of Apple and Microsoft"
-- "What's Nvidia's revenue growth?"
+        QUANTITATIVE: Asks for numerical metrics, financial calculations, comparisons
+        Examples:
+        - "Which companies have revenue over $100B?"
+        - "Show me companies with ROE > 15%"
+        - "Compare profit margins of Apple and Microsoft"
+        - "What's Nvidia's revenue growth?"
 
-QUALITATIVE: Asks about business strategy, risks, operations, non-numerical info
-Examples:
-- "What are Apple's main risk factors?"
-- "Describe Microsoft's business model"
-- "What does Google say about AI?"
-- "What legal issues is Tesla facing?"
+        QUALITATIVE: Asks about business strategy, risks, operations, non-numerical info
+        Examples:
+        - "What are Apple's main risk factors?"
+        - "Describe Microsoft's business model"
+        - "What does Google say about AI?"
+        - "What legal issues is Tesla facing?"
 
-HYBRID: Requires BOTH financial data AND qualitative context
-Examples:
-- "Which high-revenue companies face regulatory risks?"
-- "Show profitable companies with strong AI strategy"
-- "Companies with good margins but high legal risk?"
+        HYBRID: Requires BOTH financial data AND qualitative context
+        Examples:
+        - "Which high-revenue companies face regulatory risks?"
+        - "Show profitable companies with strong AI strategy"
+        - "Companies with good margins but high legal risk?"
 
-IMPORTANT - Company Name Extraction:
-- Extract ANY mentioned companies from the query
-- Match company names to tickers using the AVAILABLE COMPANIES list above
-- Handle variations (e.g., "Apple" -> AAPL, "apple" -> AAPL, "Meta" or "Facebook" -> META)
-- Handle typos intelligently (e.g., "Nvida" -> NVDA)
-- If ticker mentioned directly (e.g., "AAPL"), use it
+        IMPORTANT - Company Name Extraction:
+        - Extract ANY mentioned companies from the query
+        - Match company names to tickers using the AVAILABLE COMPANIES list above
+        - Handle variations (e.g., "Apple" -> AAPL, "apple" -> AAPL, "Meta" or "Facebook" -> META)
+        - Handle typos intelligently (e.g., "Nvida" -> NVDA)
+        - If ticker mentioned directly (e.g., "AAPL"), use it
 
-Respond ONLY with valid JSON:
-{{
-    "query_type": "QUANTITATIVE" | "QUALITATIVE" | "HYBRID",
-    "reasoning": "Brief explanation",
-    "mentioned_companies": [
-        {{"name": "Apple Inc", "ticker": "AAPL"}},
-        {{"name": "Nvidia Corporation", "ticker": "NVDA"}}
-    ],
-    "financial_metrics": ["revenue", "profit_margin"],
-    "qualitative_aspects": ["risk_factors"]
-}}"""
+        Respond ONLY with valid JSON:
+        {{
+            "query_type": "QUANTITATIVE" | "QUALITATIVE" | "HYBRID",
+            "reasoning": "Brief explanation",
+            "mentioned_companies": [
+                {{"name": "Apple Inc", "ticker": "AAPL"}},
+                {{"name": "Nvidia Corporation", "ticker": "NVDA"}}
+            ],
+            "financial_metrics": ["revenue", "profit_margin"],
+            "qualitative_aspects": ["risk_factors"]
+        }}"""
     
     def classify(self, user_query: str) -> Dict:
         """

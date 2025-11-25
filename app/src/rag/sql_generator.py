@@ -9,12 +9,15 @@ import os
 from dotenv import load_dotenv
 from ..utils.database import get_db_connection
 from ..utils.company_loader import CompanyLoader
+import streamlit as st
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = ""
+if hasattr(st, 'secrets') and "OPENAI_API_KEY" in st.secrets:
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 
 class SQLGenerator:
@@ -492,7 +495,6 @@ CRITICAL REMINDERS:
             elif sql_query.startswith("```"):
                 sql_query = sql_query.replace("```", "").strip()
             
-            logger.info(f"Generated SQL: {sql_query}...")
             
             return {
                 "sql": sql_query,

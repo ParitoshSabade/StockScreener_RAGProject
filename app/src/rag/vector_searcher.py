@@ -8,12 +8,15 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from ..utils.database import get_db_connection
+import streamlit as st
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = ""
+if hasattr(st, 'secrets') and "OPENAI_API_KEY" in st.secrets:
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 
 class VectorSearcher:

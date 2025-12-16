@@ -312,58 +312,12 @@ MAX_QUERIES_PER_DAY = 30
 
 ---
 
-## 🌐 Deployment
-
-### Streamlit Community Cloud (Free)
-
-1. **Push to GitHub**
-```bash
-   git push origin master
-```
-
-2. **Deploy on Streamlit Cloud**
-   - Go to [share.streamlit.io](https://share.streamlit.io)
-   - Connect your GitHub repository
-   - Set main file: `app/streamlit_app.py`
-
-3. **Configure Secrets**
-   - Go to App Settings → Secrets
-   - Add your environment variables in TOML format:
-```toml
-   OPENAI_API_KEY = "your-key"
-   DB_HOST = "your-host"
-   DB_PORT = "6543"
-   DB_USER = "postgres.project-ref"
-   DB_NAME = "postgres"
-   DB_PASSWORD = "your-password"
-   DB_SSLMODE = "require"
-```
-
-4. **Access your app**
-```
-   https://your-app.streamlit.app
-```
-
----
-
 ## 📈 Performance
 
 - **Database**: 142 MB / 500 MB used (358 MB available)
 - **Documents**: 3,818 transcript chunks + 10-K embeddings
 - **Response Time**: 2-5 seconds average
 - **Concurrent Users**: Scales with Streamlit Community Cloud limits
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 
@@ -399,3 +353,4 @@ Project Link: [https://github.com/ParitoshSabade/StockScreener_RAGProject](https
 Made with ❤️ by Paritosh Sabade
 
 </div>
+
